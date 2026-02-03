@@ -26,4 +26,8 @@ func init() {
 	rootCmd.AddCommand(useCmd)
 	rootCmd.AddCommand(removeCmd)
 	rootCmd.AddCommand(uiCmd)
+
+	// Add aliases for common commands
+	listCmd.Aliases = []string{"ls"}
+	removeCmd.Aliases = []string{"rm", "del"}
 }
