@@ -32,12 +32,7 @@ func getProfilesPath() string {
 // getClaudeConfigPath returns the path to Claude's settings.json
 func getClaudeConfigPath() string {
 	home, _ := os.UserHomeDir()
-	// Try both ~/.claude/settings.json and ~/.claude/claude.json
-	settingsPath := filepath.Join(home, ".claude", "settings.json")
-	if _, err := os.Stat(settingsPath); err == nil {
-		return settingsPath
-	}
-	return filepath.Join(home, ".claude", "claude.json")
+	return filepath.Join(home, ".claude", "settings.json")
 }
 
 // Profile represents a Claude Code configuration profile
