@@ -9,7 +9,11 @@
       "Bash(go get:*)",
       "Bash(go mod:*)",
       "Bash(go build:*)",
-      "Bash(./ccs:*)"
+      "Bash(./ccs:*)",
+      "Bash(gh repo create:*)",
+      "Bash(curl:*)",
+      "Bash(sudo:*)",
+      "Bash(chmod:*)"
     ]
   }
 }
