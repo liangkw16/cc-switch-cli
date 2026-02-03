@@ -31,9 +31,14 @@ case $OS in
         ;;
 esac
 
-# 获取最新版本号
+# 获取最新版本号（使用 jq 更可靠）
 echo "正在获取最新版本..."
-VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest | grep '"tag_name"' | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
+if command -v jq &>/dev/null 2>&1; then
+    VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest | jq -r '.tag_name')
+else
+    # 如果没有 jq，使用简单的 grep + cut 方式
+    VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest | grep -o '"tag_name":"[^"]*"' | cut -d'"' -f4)
+fi
 
 # 下载
 echo "正在下载 CCS v$VERSION..."
