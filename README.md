@@ -128,7 +128,7 @@ ccs ui
 
 - **配置存储**：`~/.config/ccs/profiles.json`
 - **Claude 配置**：`~/.claude/settings.json`（或 `claude.json`）
-- **备份目录**：`~/.config/cc-switch/backups/`
+- **备份目录**：`~/.ccs/backups/`
 
 ## 开发
 

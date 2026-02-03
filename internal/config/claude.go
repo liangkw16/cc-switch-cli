@@ -23,8 +23,9 @@ func backupClaudeSettings() error {
 		return err
 	}
 
-	// Create backup directory
-	backupDir := filepath.Join(filepath.Dir(getProfilesPath()), "backups")
+	// Create backup directory in ~/.ccs
+	home, _ := os.UserHomeDir()
+	backupDir := filepath.Join(home, ".ccs", "backups")
 	if err := os.MkdirAll(backupDir, 0755); err != nil {
 		return err
 	}
