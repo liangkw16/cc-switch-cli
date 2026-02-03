@@ -10,7 +10,7 @@ OS=$(uname -s)
 
 case $OS in
     Darwin*)
-        FILE="ccs-darwin-$ARCH"
+        FILE="ccs-darwin-amd64"
         ;;
     Linux*)
         FILE="ccs-linux-$ARCH"
@@ -21,9 +21,13 @@ case $OS in
         ;;
 esac
 
-# 下载最新版本
-echo "正在下载 CCS..."
-LATEST_URL="https://github.com/liangkw16/cc-switch-cli/releases/latest/download/ccs"
+# 获取最新版本号
+echo "正在获取最新版本..."
+VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest | grep '"tag_name"' | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
+
+# 下载
+echo "正在下载 CCS v$VERSION..."
+LATEST_URL="https://github.com/liangkw16/cc-switch-cli/releases/download/v$VERSION/$FILE"
 curl -fsSL "$LATEST_URL" -o /tmp/ccs
 
 # 安装
@@ -33,5 +37,5 @@ sudo install -m 755 /tmp/ccs /usr/local/bin/ccs
 # 清理
 rm -f /tmp/ccs
 
-echo "CCS 安装完成！"
+echo "CCS v$VERSION 安装完成！"
 echo "使用 'ccs --help' 查看命令"
