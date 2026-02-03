@@ -9,11 +9,10 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:     "ls",
-	Short:   "List all profiles",
-	Long:    `List all Claude Code configuration profiles.`,
-	Aliases: []string{"list"},
-	Run:     runList,
+	Use:   "ls",
+	Short: "List all profiles",
+	Long:  `List all Claude Code configuration profiles.`,
+	Run:   runList,
 }
 
 func runList(cmd *cobra.Command, args []string) {
