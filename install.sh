@@ -8,6 +8,16 @@ set -e
 ARCH=$(uname -m)
 OS=$(uname -s)
 
+# 处理架构名称映射
+case $ARCH in
+    x86_64)
+        ARCH="amd64"
+        ;;
+    aarch64)
+        ARCH="arm64"
+        ;;
+esac
+
 case $OS in
     Darwin*)
         FILE="ccs-darwin-amd64"
