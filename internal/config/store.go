@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"sync"
-
-	"github.com/adrg/xdg"
 )
 
 const (
@@ -24,13 +22,8 @@ var (
 // getProfilesPath returns the path to the profiles.json file
 func getProfilesPath() string {
 	once.Do(func() {
-		configDir := filepath.Join(xdg.ConfigHome, AppName)
-		// Fallback to ~/.config/ccs if xdg.ConfigHome is empty
-		if configDir == "" {
-			home, _ := os.UserHomeDir()
-			configDir = filepath.Join(home, ".config", AppName)
-		}
-		profilesPath = filepath.Join(configDir, "profiles.json")
+		home, _ := os.UserHomeDir()
+		profilesPath = filepath.Join(home, ".ccs", "profiles.json")
 	})
 	return profilesPath
 }
