@@ -9,11 +9,12 @@ import (
 )
 
 var removeCmd = &cobra.Command{
-	Use:   "remove <name>",
-	Short: "Remove a profile",
-	Long:  `Remove a Claude Code configuration profile.`,
-	Args:  cobra.ExactArgs(1),
-	Run:   runRemove,
+	Use:     "rm <name>",
+	Short:   "Remove a profile",
+	Long:    `Remove a Claude Code configuration profile.`,
+	Args:    cobra.ExactArgs(1),
+	Aliases: []string{"remove", "del"},
+	Run:     runRemove,
 }
 
 func runRemove(cmd *cobra.Command, args []string) {
