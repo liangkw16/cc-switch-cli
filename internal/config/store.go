@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"sync"
 )
 
 const (
-	// AppName is the name of the application
+	// AppName is name of the application
 	AppName = "ccs"
 )
 
@@ -77,13 +78,14 @@ func NewStore() *Store {
 
 // validateProfileName checks if a profile name is valid
 func validateProfileName(name string) error {
-	// Alphanumeric, hyphens, underscores only
-	matched, err := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, name)
-	if err != nil {
-		return err
-	}
-	if !matched {
+	// Remove any invalid characters, check if something remains
+	invalidChars := regexp.MustCompile(`[^a-zA-Z0-9_-]`)
+	trimmed := invalidChars.ReplaceAllString(name, "")
+	if trimmed != name {
 		return fmt.Errorf("profile name must contain only letters, numbers, hyphens, and underscores")
+	}
+	if strings.TrimSpace(name) == "" {
+		return fmt.Errorf("profile name cannot be empty")
 	}
 	return nil
 }
