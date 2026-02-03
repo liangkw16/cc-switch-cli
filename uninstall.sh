@@ -10,6 +10,6 @@ echo "正在卸载 CCS..."
 sudo rm -f /usr/local/bin/ccs
 
 # 删除配置
-rm -rf ~/.config/ccs ~/.ccs
+rm -rf ~/.ccs
 
 echo "CCS 已卸载！"
