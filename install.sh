@@ -1,39 +1,51 @@
 #!/bin/bash
 set -e
 
-# CCS 源码部署安装命令:
+# CCS 一行安装命令:
 # curl -fsSL https://raw.githubusercontent.com/liangkw16/cc-switch-cli/main/install.sh | sudo sh
 
-# 检查 Go 环境
-if ! command -v go &>/dev/null 2>&1; then
-    echo "错误: 未安装 Go，请先安装 Go"
-    echo "  访问 https://go.dev/dl/ 下载"
-    exit 1
-fi
-
-# 获取系统信息
+# 检测系统架构
 ARCH=$(uname -m)
 OS=$(uname -s)
 
-# 创建临时目录
-TMP_DIR=$(mktemp -d)
-trap "rm -rf $TMP_DIR" EXIT
+# 处理架构名称映射
+case $ARCH in
+    x86_64)
+        ARCH="amd64"
+        ;;
+    aarch64)
+        ARCH="arm64"
+        ;;
+esac
 
-echo "正在克隆源码..."
-git clone --depth 1 https://github.com/liangkw16/cc-switch-cli.git "$TMP_DIR"
+case $OS in
+    Darwin*)
+        FILE="ccs-darwin-amd64"
+        ;;
+    Linux*)
+        FILE="ccs-linux-$ARCH"
+        ;;
+    *)
+        echo "不支持的操作系统: $OS"
+        exit 1
+        ;;
+esac
 
-echo "正在编译..."
-cd "$TMP_DIR/cc-switch-cli"
+# 获取最新版本号（使用 awk 更可靠）
+echo "正在获取最新版本..."
+VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest 2>/dev/null | awk -F'"' '/tag_name/ {print $4}')
 
-# 编译
-go build -o ccs
+# 下载
+echo "正在下载 CCS $VERSION..."
+LATEST_URL="https://github.com/liangkw16/cc-switch-cli/releases/download/$VERSION/$FILE"
+curl -fsSL "$LATEST_URL" -o /tmp/ccs
 
 # 安装
 echo "正在安装到 /usr/local/bin/ccs..."
-sudo install -m 755 ccs /usr/local/bin/ccs
+sudo install -m 755 /tmp/ccs /usr/local/bin/ccs
 
 # 清理
-rm -rf "$TMP_DIR"
+rm -f /tmp/ccs
 
-echo "CCS 安装完成！"
+echo "CCS $VERSION 安装完成！"
 echo "使用 'ccs --help' 查看命令"
