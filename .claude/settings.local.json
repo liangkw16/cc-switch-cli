@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__zread__get_repo_structure",
+      "mcp__zread__read_file",
+      "mcp__web-reader__webReader",
+      "mcp__web-search-prime__webSearchPrime",
+      "Bash(go mod init:*)",
+      "Bash(go get:*)",
+      "Bash(go mod:*)",
+      "Bash(go build:*)",
+      "Bash(./ccs:*)"
+    ]
+  }
+}
