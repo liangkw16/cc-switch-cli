@@ -31,9 +31,9 @@ case $OS in
         ;;
 esac
 
-# 获取最新版本号（直接使用 sed 提取）
+# 获取最新版本号（使用 awk 更可靠）
 echo "正在获取最新版本..."
-VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest | sed -n 's/.*"tag_name":"//p')
+VERSION=$(curl -fsSL https://api.github.com/repos/liangkw16/cc-switch-cli/releases/latest 2>/dev/null | awk -F'"' '/tag_name/ {print $4}')
 
 # 下载
 echo "正在下载 CCS $VERSION..."
