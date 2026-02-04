@@ -35,6 +35,18 @@ func getClaudeConfigPath() string {
 	return filepath.Join(home, ".claude", "settings.json")
 }
 
+// getClaudeJSONPath returns the path to ~/.claude.json
+// This file contains MCP servers and hasCompletedOnboarding flag
+func getClaudeJSONPath() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".claude.json")
+}
+
+// GetClaudeJSONPath returns the path to ~/.claude.json (exported)
+func GetClaudeJSONPath() string {
+	return getClaudeJSONPath()
+}
+
 // Profile represents a Claude Code configuration profile
 type Profile struct {
 	Env map[string]string `json:"env"`

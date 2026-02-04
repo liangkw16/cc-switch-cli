@@ -44,6 +44,13 @@ func runUse(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	// Set hasCompletedOnboarding to skip Claude Code's first-time setup
+	if changed, err := config.SetHasCompletedOnboarding(); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: failed to set onboarding flag: %v\n", err)
+	} else if changed {
+		fmt.Println("Onboarding flag set: first-time setup will be skipped.")
+	}
+
 	// Update store current
 	if err := store.SetCurrent(name); err != nil {
 		fmt.Fprintf(os.Stderr, "Error updating active profile: %v\n", err)

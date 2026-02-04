@@ -208,3 +208,129 @@ func GetCurrentClaudeSettings() (*ClaudeSettings, error) {
 
 	return &settings, nil
 }
+
+// ClaudeJSON represents the ~/.claude.json structure
+type ClaudeJSON struct {
+	HasCompletedOnboarding bool              `json:"hasCompletedOnboarding"`
+	MCPServers             map[string]any    `json:"mcpServers,omitempty"`
+}
+
+// SetHasCompletedOnboarding sets hasCompletedOnboarding=true in ~/.claude.json
+// This skips Claude Code's first-time setup confirmation
+func SetHasCompletedOnboarding() (bool, error) {
+	path := getClaudeJSONPath()
+	var config ClaudeJSON
+
+	// Read existing file if it exists
+	if data, err := os.ReadFile(path); err == nil {
+		if err := json.Unmarshal(data, &config); err != nil {
+			// If parse fails, start fresh
+			config = ClaudeJSON{}
+		}
+	} else if !os.IsNotExist(err) {
+		return false, fmt.Errorf("failed to read ~/.claude.json: %w", err)
+	}
+
+	// Check if already set
+	if config.HasCompletedOnboarding {
+		return false, nil
+	}
+
+	// Set the flag
+	config.HasCompletedOnboarding = true
+
+	// Ensure directory exists
+	claudeDir := filepath.Dir(path)
+	if err := os.MkdirAll(claudeDir, 0755); err != nil {
+		return false, fmt.Errorf("failed to create .claude directory: %w", err)
+	}
+
+	// Write to temp file first for atomicity
+	tmpPath := path + ".tmp"
+	data, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal config: %w", err)
+	}
+
+	if err := os.WriteFile(tmpPath, data, 0644); err != nil {
+		return false, fmt.Errorf("failed to write temp file: %w", err)
+	}
+
+	// Atomic rename
+	if err := os.Rename(tmpPath, path); err != nil {
+		return false, fmt.Errorf("failed to rename temp file: %w", err)
+	}
+
+	return true, nil
+}
+
+// ClearHasCompletedOnboarding removes hasCompletedOnboarding from ~/.claude.json
+// This restores Claude Code's first-time setup confirmation
+func ClearHasCompletedOnboarding() (bool, error) {
+	path := getClaudeJSONPath()
+
+	// Check if file exists
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false, nil
+	}
+
+	// Read existing file
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, fmt.Errorf("failed to read ~/.claude.json: %w", err)
+	}
+
+	var config ClaudeJSON
+	if err := json.Unmarshal(data, &config); err != nil {
+		return false, fmt.Errorf("failed to parse ~/.claude.json: %w", err)
+	}
+
+	// Check if flag was set
+	if !config.HasCompletedOnboarding {
+		return false, nil
+	}
+
+	// Clear the flag
+	config.HasCompletedOnboarding = false
+
+	// Write to temp file first for atomicity
+	tmpPath := path + ".tmp"
+	data, err = json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal config: %w", err)
+	}
+
+	if err := os.WriteFile(tmpPath, data, 0644); err != nil {
+		return false, fmt.Errorf("failed to write temp file: %w", err)
+	}
+
+	// Atomic rename
+	if err := os.Rename(tmpPath, path); err != nil {
+		return false, fmt.Errorf("failed to rename temp file: %w", err)
+	}
+
+	return true, nil
+}
+
+// IsHasCompletedOnboarding checks if the onboarding flag is set
+func IsHasCompletedOnboarding() (bool, error) {
+	path := getClaudeJSONPath()
+
+	// Check if file exists
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false, nil
+	}
+
+	// Read existing file
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, fmt.Errorf("failed to read ~/.claude.json: %w", err)
+	}
+
+	var config ClaudeJSON
+	if err := json.Unmarshal(data, &config); err != nil {
+		return false, fmt.Errorf("failed to parse ~/.claude.json: %w", err)
+	}
+
+	return config.HasCompletedOnboarding, nil
+}
